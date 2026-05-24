@@ -1,0 +1,31 @@
+databases:
+  - name: workflowhub-db
+    plan: free
+    databaseName: workflowhub
+    user: workflowhub
+
+services:
+  - type: web
+    name: workflowhub
+    env: node
+    plan: free
+    rootDir: backend
+    autoDeploy: true
+    healthCheckPath: /api/health
+    buildCommand: npm ci && npm run build
+    startCommand: npm run migrate && npm run seed && npm run start
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: workflowhub-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: FRONTEND_URL
+        sync: false
+      - key: RATE_LIMIT_WINDOW_MS
+        value: 900000
+      - key: RATE_LIMIT_MAX
+        value: 200

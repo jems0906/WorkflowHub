@@ -198,6 +198,7 @@ On pushes to `main`/`master` and `v*` tags, CI also runs strict preflight (`PREF
 - Deployment runbook: `docs/deployment-runbook.md`
 - Release candidate checklist: `docs/release-candidate-checklist.md`
 - QA and ops handoff: `docs/qa-ops-handoff.md`
+- Render deployment: `docs/render-deployment.md`
 
 ## Changelog
 
