@@ -90,7 +90,7 @@ try {
   Write-Marker 'PREFLIGHT_PHASE' 'build_pass'
 
   Write-Marker 'PREFLIGHT_PHASE' 'smoke_start'
-  & powershell -ExecutionPolicy Bypass -File $smokeAllScript
+  & $smokeAllScript
   if ($LASTEXITCODE -ne 0) {
     throw 'Smoke suite failed'
   }

@@ -22,14 +22,14 @@ if (-not (Test-Path $rbacScript)) {
 
 try {
   Write-Marker 'SMOKE_ALL_PHASE' 'api_start'
-  & powershell -ExecutionPolicy Bypass -File $apiScript
+  & $apiScript
   if ($LASTEXITCODE -ne 0) {
     throw 'smoke-api failed'
   }
   Write-Marker 'SMOKE_ALL_PHASE' 'api_pass'
 
   Write-Marker 'SMOKE_ALL_PHASE' 'rbac_start'
-  & powershell -ExecutionPolicy Bypass -File $rbacScript
+  & $rbacScript
   if ($LASTEXITCODE -ne 0) {
     throw 'smoke-rbac failed'
   }
