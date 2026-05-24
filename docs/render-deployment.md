@@ -7,20 +7,21 @@
 
 ## 2. Deploy Using Blueprint
 
-Render can provision both the web service and PostgreSQL using `render.yaml`.
+This blueprint creates the web service only. Use an existing PostgreSQL instance by setting `DATABASE_URL`.
 
 1. In Render, click New and then Blueprint.
 2. Select this GitHub repository.
-3. Confirm creation of:
-   - web service: `workflowhub`
-   - PostgreSQL database: `workflowhub-db`
+3. Confirm creation of web service: `workflowhub`.
 4. Complete deploy.
 
 ## 3. Required Environment Values
 
-`render.yaml` sets most values automatically.
+Set these values in the web service environment before first successful start:
 
-After first deploy, set `FRONTEND_URL` in the web service environment to your Render URL, for example:
+- `DATABASE_URL` (connection string for an existing Render PostgreSQL instance)
+- `FRONTEND_URL` (your Render app URL)
+
+Example `FRONTEND_URL`:
 
 - `https://workflowhub.onrender.com`
 
@@ -49,4 +50,5 @@ npm run smoke:all
 ## 6. Notes
 
 - Free plans may cold-start.
+- If your workspace already has one active free Postgres, Render will reject provisioning another free database.
 - `startCommand` runs migrations and seed each deploy; seed is idempotent.

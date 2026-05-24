@@ -1,9 +1,3 @@
-databases:
-  - name: workflowhub-db
-    plan: free
-    databaseName: workflowhub
-    user: workflowhub
-
 services:
   - type: web
     name: workflowhub
@@ -16,9 +10,7 @@ services:
     startCommand: npm run migrate && npm run seed && npm run start
     envVars:
       - key: DATABASE_URL
-        fromDatabase:
-          name: workflowhub-db
-          property: connectionString
+        sync: false
       - key: JWT_SECRET
         generateValue: true
       - key: JWT_EXPIRES_IN
