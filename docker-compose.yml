@@ -1,0 +1,23 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: workflowhub_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: workflowhub
+      POSTGRES_PASSWORD: workflowhub_pass
+      POSTGRES_DB: workflowhub
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U workflowhub -d workflowhub"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres_data:

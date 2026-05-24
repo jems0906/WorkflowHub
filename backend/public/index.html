@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WorkflowHub</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>WorkflowHub</h1>
+    <div id="sessionInfo"></div>
+  </header>
+
+  <main class="container">
+    <section id="authView" class="card">
+      <h2>Sign In</h2>
+      <div class="row">
+        <input id="email" placeholder="Email" />
+        <input id="password" type="password" placeholder="Password" />
+      </div>
+      <div class="row">
+        <button id="loginBtn">Login</button>
+        <button id="registerBtn" class="secondary">Register</button>
+      </div>
+      <p class="hint">Demo: admin@workflowhub.local / Admin123!</p>
+    </section>
+
+    <section id="appView" class="hidden">
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card">
+          <span>Total</span>
+          <strong id="statTotal">0</strong>
+        </div>
+        <div class="stat-card">
+          <span>In Review</span>
+          <strong id="statInReview">0</strong>
+        </div>
+        <div class="stat-card">
+          <span>Approved</span>
+          <strong id="statApproved">0</strong>
+        </div>
+        <div class="stat-card">
+          <span>Rejected</span>
+          <strong id="statRejected">0</strong>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Notifications</h2>
+        <div class="row">
+          <button id="refreshNotificationsBtn" class="secondary">Refresh</button>
+          <button id="markAllReadBtn" class="secondary">Mark All Read</button>
+          <span id="syncPulse" class="sync-pulse" aria-hidden="true"></span>
+          <span id="connectionHealth" class="conn-badge online" role="status" aria-live="polite">Online</span>
+          <span id="liveModeIndicator" class="live-indicator off" role="status" aria-live="polite" title="Live mode off">●</span>
+          <span id="autoRefreshStatus" class="hint">Auto-refresh: Off</span>
+          <span
+            class="help-tip"
+            tabindex="0"
+            role="button"
+            aria-label="Auto-refresh behavior help"
+            data-tip="Normal refresh interval is 15 seconds. On repeated failures, retry delay doubles up to 120 seconds. Delay resets to 15 seconds after recovery."
+          >?</span>
+          <span id="lastRefreshStatus" class="hint">Last refresh: never</span>
+        </div>
+        <p id="statusEventLine" class="event-log">System ready.</p>
+        <details id="eventHistoryPanel" class="event-history">
+          <summary>Event History</summary>
+          <div class="event-history-actions">
+            <select id="eventExportFormat" class="small-select" title="Event export format">
+              <option value="json" selected>JSON</option>
+              <option value="csv">CSV</option>
+            </select>
+            <button id="clearEventHistoryBtn" type="button" class="secondary small-btn">Clear</button>
+            <button id="restoreEventHistoryBtn" type="button" class="secondary small-btn">Restore</button>
+            <button id="copyLastEventBtn" type="button" class="secondary small-btn" title="Copy latest event (Ctrl+Shift+E)">Copy Last</button>
+            <button id="exportEventHistoryBtn" type="button" class="secondary small-btn">Export</button>
+          </div>
+          <p id="eventActionsHint" class="shortcut-hint hidden">Actions disabled until an event is recorded.</p>
+          <p id="shortcutHint" class="shortcut-hint">Shortcuts: Copy Last = Ctrl/Cmd + Shift + E</p>
+          <ul id="eventHistoryList" class="list compact-list"></ul>
+        </details>
+        <ul id="notificationList" class="list"></ul>
+      </div>
+
+      <div class="card">
+        <h2>Create Task</h2>
+        <div class="row">
+          <button id="generateDemoBtn" class="secondary">Generate Demo Workflow</button>
+          <button id="resetDemoBtn" class="danger">Reset Demo Data</button>
+        </div>
+        <div class="grid2">
+          <input id="taskTitle" placeholder="Title" />
+          <select id="taskPriority" title="Task priority">
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+            <option value="critical">Critical</option>
+          </select>
+        </div>
+        <div class="row">
+          <select id="taskAssignee" title="Task assignee">
+            <option value="">Unassigned</option>
+          </select>
+        </div>
+        <textarea id="taskDescription" placeholder="Description"></textarea>
+        <div class="row">
+          <button id="createTaskBtn">Create Task</button>
+          <button id="logoutBtn" class="danger">Logout</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Tasks</h2>
+        <div class="legend" aria-label="Task status legend">
+          <span class="legend-item"><span class="dot submitted"></span>Submitted</span>
+          <span class="legend-item"><span class="dot in_review"></span>In Review</span>
+          <span class="legend-item"><span class="dot approved"></span>Approved</span>
+          <span class="legend-item"><span class="dot rejected"></span>Rejected</span>
+          <span class="legend-item"><span class="dot completed"></span>Completed</span>
+        </div>
+        <div class="quick-filters" aria-label="Quick task filters">
+          <button class="chip" data-quick-filter="status:in_review">In Review</button>
+          <button class="chip" data-quick-filter="status:approved">Approved</button>
+          <button class="chip" data-quick-filter="status:rejected">Rejected</button>
+          <button class="chip" data-quick-filter="priority:critical">Critical Priority</button>
+          <button id="clearQuickFiltersBtn" class="secondary">Clear Filters</button>
+        </div>
+        <div class="row">
+          <select id="viewPreset" title="Saved task views">
+            <option value="">View: Custom</option>
+            <option value="my_queue">My Queue</option>
+            <option value="needs_review">Needs Review</option>
+            <option value="recently_rejected">Recently Rejected</option>
+            <option value="critical_open">Critical Open</option>
+          </select>
+          <input id="search" placeholder="Search tasks" />
+          <select id="statusFilter" title="Status filter">
+            <option value="">All statuses</option>
+            <option value="submitted">Submitted</option>
+            <option value="in_review">In Review</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+            <option value="completed">Completed</option>
+          </select>
+          <select id="sortBy" title="Sort tasks by">
+            <option value="created_at">Sort: Created Time</option>
+            <option value="updated_at">Sort: Last Activity</option>
+            <option value="title">Sort: Title</option>
+            <option value="priority">Sort: Priority</option>
+            <option value="status">Sort: Status</option>
+          </select>
+          <select id="sortDir" title="Sort direction">
+            <option value="desc">Newest First</option>
+            <option value="asc">Oldest First</option>
+          </select>
+          <button id="refreshBtn" class="secondary">Refresh</button>
+          <button id="autoRefreshBtn" class="secondary">Enable Auto-refresh</button>
+        </div>
+        <div class="active-filters">
+          <div class="active-filters-left">
+            <span id="activeFiltersText" class="hint">No active filters</span>
+            <span id="resultCountText" class="hint">Showing 0 tasks</span>
+          </div>
+          <button id="clearAllFiltersBtn" class="secondary" disabled>Clear All</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th class="sortable" data-sort="title" tabindex="0" aria-sort="none" aria-label="Sort by title">Title <span class="sort-indicator" id="sortIndTitle">↕</span></th>
+              <th class="sortable" data-sort="status" tabindex="0" aria-sort="none" aria-label="Sort by status">Status <span class="sort-indicator" id="sortIndStatus">↕</span></th>
+              <th class="sortable" data-sort="priority" tabindex="0" aria-sort="none" aria-label="Sort by priority">Priority <span class="sort-indicator" id="sortIndPriority">↕</span></th>
+              <th class="sortable" data-sort="updated_at" tabindex="0" aria-sort="none" aria-label="Sort by last activity">Last Activity <span class="sort-indicator" id="sortIndUpdated">↕</span></th>
+              <th>Assignee</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="taskTable"></tbody>
+        </table>
+        <div id="taskEmptyState" class="empty-state hidden" role="status" aria-live="polite">
+          <p>No tasks matched your current filters.</p>
+          <button id="emptyClearFiltersBtn" class="secondary">Clear Filters</button>
+        </div>
+        <div class="row pager-row">
+          <button id="prevPageBtn" class="secondary">Previous</button>
+          <span id="pageInfo" class="hint">Page 1 / 1</span>
+          <button id="nextPageBtn" class="secondary">Next</button>
+        </div>
+      </div>
+
+      <div class="card" id="taskDetailCard">
+        <h2>Task Details</h2>
+        <p id="taskDetailMeta" class="hint">Select a task from the table to view details.</p>
+        <div class="row">
+          <select id="detailAssignee" title="Reassign task">
+            <option value="">Unassigned</option>
+          </select>
+          <button id="reassignBtn" class="secondary">Reassign</button>
+        </div>
+
+        <h3>Comments</h3>
+        <p id="taskDetailLoading" class="hint hidden">Loading task details...</p>
+        <textarea id="commentInput" placeholder="Add a comment"></textarea>
+        <div class="row">
+          <button id="addCommentBtn">Add Comment</button>
+        </div>
+        <ul id="commentList" class="list"></ul>
+
+        <h3>Audit History</h3>
+        <div class="row">
+          <button id="exportAuditBtn" class="secondary">Export Audit CSV</button>
+        </div>
+        <ul id="historyList" class="list"></ul>
+      </div>
+    </section>
+  </main>
+
+  <div id="toastHost" class="toast-host"></div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
