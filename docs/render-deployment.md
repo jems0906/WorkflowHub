@@ -18,8 +18,10 @@ This blueprint creates the web service only. Use an existing PostgreSQL instance
 
 Set these values in the web service environment before first successful start:
 
-- `DATABASE_URL` (connection string for an existing Render PostgreSQL instance)
+- `DATABASE_URL` (use the Internal Database URL from an existing Render PostgreSQL instance, not localhost)
 - `FRONTEND_URL` (your Render app URL)
+
+If logs show `ECONNREFUSED 127.0.0.1:5432`, DATABASE_URL is missing or points to localhost.
 
 Example `FRONTEND_URL`:
 
