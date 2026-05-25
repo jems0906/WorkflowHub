@@ -2,6 +2,12 @@
 
 ## 1. Rotate JWT Secret
 
+Generate a strong secret locally:
+
+```bash
+npm run jwt:generate
+```
+
 1. Open Render service `workflowhub`.
 2. Go to Environment.
 3. Update `JWT_SECRET` to a new strong random value (at least 32 chars).

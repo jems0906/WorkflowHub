@@ -13,6 +13,7 @@
     "smoke:api": "powershell -ExecutionPolicy Bypass -File scripts/smoke-api.ps1",
     "smoke:rbac": "powershell -ExecutionPolicy Bypass -File scripts/smoke-rbac.ps1",
     "smoke:all": "powershell -ExecutionPolicy Bypass -File scripts/smoke-all.ps1",
-    "preflight": "powershell -ExecutionPolicy Bypass -File scripts/preflight.ps1"
+    "preflight": "powershell -ExecutionPolicy Bypass -File scripts/preflight.ps1",
+    "jwt:generate": "powershell -ExecutionPolicy Bypass -File scripts/generate-jwt-secret.ps1"
   }
 }
