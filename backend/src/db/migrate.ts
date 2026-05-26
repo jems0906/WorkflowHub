@@ -4,13 +4,28 @@ const schema = `
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 -- Roles enum
-CREATE TYPE user_role AS ENUM ('user', 'reviewer', 'admin');
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'user_role') THEN
+    CREATE TYPE user_role AS ENUM ('user', 'reviewer', 'admin');
+  END IF;
+END$$;
 
 -- Task status enum
-CREATE TYPE task_status AS ENUM ('submitted', 'in_review', 'approved', 'rejected', 'completed');
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'task_status') THEN
+    CREATE TYPE task_status AS ENUM ('submitted', 'in_review', 'approved', 'rejected', 'completed');
+  END IF;
+END$$;
 
 -- Task priority enum
-CREATE TYPE task_priority AS ENUM ('low', 'medium', 'high', 'critical');
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'task_priority') THEN
+    CREATE TYPE task_priority AS ENUM ('low', 'medium', 'high', 'critical');
+  END IF;
+END$$;
 
 -- Users
 CREATE TABLE IF NOT EXISTS users (
