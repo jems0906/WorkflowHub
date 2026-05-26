@@ -13,6 +13,7 @@ import commentRoutes from './routes/comment.routes';
 import notificationRoutes from './routes/notification.routes';
 import userRoutes from './routes/user.routes';
 import { errorHandler } from './middleware/errorHandler';
+import { pool } from './db/pool';
 
 const app = express();
 
@@ -80,8 +81,46 @@ app.get('*', (req, res, next) => {
 app.use(errorHandler);
 
 const PORT = parseInt(process.env.PORT ?? '4000', 10);
-app.listen(PORT, () => {
-  console.log(`🚀 WorkflowHub API running on http://localhost:${PORT}`);
-});
+
+async function ensureDatabaseConnection(): Promise<void> {
+  const maxAttempts = parseInt(process.env.DB_CONNECT_MAX_ATTEMPTS ?? '5', 10);
+  const retryDelayMs = parseInt(process.env.DB_CONNECT_RETRY_MS ?? '1500', 10);
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      await pool.query('SELECT 1');
+      if (attempt > 1) {
+        console.log(`✅ Database connection established on attempt ${attempt}/${maxAttempts}`);
+      }
+      return;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(`Database connection attempt ${attempt}/${maxAttempts} failed: ${message}`);
+
+      if (attempt === maxAttempts) {
+        throw new Error(
+          'Unable to connect to PostgreSQL. Check backend/.env DATABASE_URL and DB service availability.'
+        );
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, retryDelayMs));
+    }
+  }
+}
+
+async function startServer(): Promise<void> {
+  try {
+    await ensureDatabaseConnection();
+    app.listen(PORT, () => {
+      console.log(`🚀 WorkflowHub API running on http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(`❌ Startup failed: ${message}`);
+    process.exit(1);
+  }
+}
+
+void startServer();
 
 export default app;
